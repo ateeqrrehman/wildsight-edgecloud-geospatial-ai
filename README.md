@@ -168,15 +168,27 @@ Potential orchestration use cases include:
 
 ---
 
-## Preliminary Benchmark Results
+## Benchmarking and Evaluation Plan
 
-The repository includes benchmarking utilities under `benchmarks/` and an experiment tracking template under `experiments/`. The table below is prepared for measured results after pipeline execution.
+The repository includes benchmarking utilities under `benchmarks/` and an experiment tracking template under `experiments/`. The table below defines the evaluation protocol and target metrics for measured experiments. Values are intentionally recorded as **pending measurement** until the full pipeline is executed in a controlled environment, avoiding unsupported or fabricated benchmark claims.
 
-| Experiment | Images | Avg Latency | P95 Latency | Throughput | Notes |
-|---|---:|---:|---:|---:|---|
-| Baseline YOLOv8 Endpoint | TBD | TBD | TBD | TBD | SageMaker endpoint benchmark |
-| Local Inference Baseline | TBD | TBD | TBD | TBD | Local model execution benchmark |
-| Batch Ingestion Workflow | TBD | TBD | TBD | TBD | End-to-end ingestion and export benchmark |
+| Experiment | Evaluation Dataset | Input Resolution | Batch Size | Primary Metrics | Current Status | Notes |
+|---|---:|---:|---:|---|---|---|
+| SageMaker YOLOv8 Endpoint | 50 to 500 camera-trap images | 640x640 normalized inference input | 1 | Avg latency, P95 latency, throughput, invocation error rate | Pending controlled AWS run | Measures managed endpoint inference performance |
+| Local YOLOv8 Baseline | 50 to 500 camera-trap images | 640x640 normalized inference input | 1 | Avg latency, P95 latency, images/sec, CPU/GPU utilization | Pending local benchmark | Establishes non-cloud baseline for comparison |
+| Batch Ingestion Workflow | 100 to 1,000 camera-trap images | Source image resolution with preprocessing to model input | Configurable | End-to-end runtime, S3 upload throughput, DynamoDB write completeness, artifact generation success | Pending pipeline run | Measures ingestion-to-analytics workflow reliability |
+| Geospatial Artifact Generation | Full prediction export set | Prediction records from DynamoDB | N/A | GeoJSON validity, flattened JSON completeness, record count consistency | Pending validation | Evaluates downstream analytics readiness |
+
+Recommended measured outputs include:
+
+- Average latency in milliseconds
+- P50, P95, and P99 latency
+- Images processed per second
+- End-to-end pipeline runtime
+- DynamoDB record completeness
+- GeoJSON and flattened JSON validation status
+- Endpoint invocation error rate
+- Cloud resource cost during active inference windows
 
 ---
 
