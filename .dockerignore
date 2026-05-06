@@ -1,0 +1,9 @@
+.git
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+aws.yaml
+kaggle.json
+.ipynb_checkpoints/
