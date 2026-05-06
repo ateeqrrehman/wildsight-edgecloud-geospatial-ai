@@ -1,128 +1,34 @@
-\# Reproducibility
+# Reproducibility
 
-
-
-\## Objective
-
-
+## Objective
 
 This document defines how to reproduce the WildSight EdgeCloud workflow in a consistent environment.
 
-
-
-\## Environment
-
-
+## Environment
 
 Recommended environment:
 
+- Python 3.10 or newer
+- AWS CLI configured locally
+- Kaggle API configured locally
+- Required Python packages installed from requirements.txt
 
-
-\- Python 3.10 or newer
-
-\- AWS CLI configured locally
-
-\- Kaggle API configured locally
-
-\- Required Python packages installed from `requirements.txt`
-
-
-
-\## Dataset Reproducibility
-
-
+## Dataset Reproducibility
 
 Use a fixed dataset subset when comparing experiments. Record the species folder, image count, image resolution, dataset source, and dataset access date.
 
+## Configuration Reproducibility
 
+Track the AWS region, SageMaker endpoint name, S3 bucket name, DynamoDB table name, EventBridge rules, SNS notification target, dataset subset, and model artifact version.
 
-\## Configuration Reproducibility
+## Experiment Reproducibility
 
+Each experiment should record the experiment ID, dataset subset, image count, batch size, endpoint configuration, runtime, average latency, throughput, detection metrics, and notes.
 
+## Output Validation
 
-Track:
+A successful run should produce uploaded S3 image objects, DynamoDB prediction records, SNS notifications, a GeoJSON artifact, and a flattened JSON artifact.
 
+## Future Improvements
 
-
-\- AWS region
-
-\- SageMaker endpoint name
-
-\- S3 bucket name
-
-\- DynamoDB table name
-
-\- EventBridge rules
-
-\- SNS notification target
-
-\- Dataset subset
-
-\- Model artifact version
-
-
-
-\## Experiment Reproducibility
-
-
-
-Each experiment should record:
-
-
-
-\- Experiment ID
-
-\- Dataset subset
-
-\- Image count
-
-\- Batch size
-
-\- Endpoint configuration
-
-\- Runtime
-
-\- Average latency
-
-\- Throughput
-
-\- Detection metrics
-
-\- Notes
-
-
-
-\## Output Validation
-
-
-
-A successful run should produce:
-
-
-
-\- Uploaded S3 image objects
-
-\- DynamoDB prediction records
-
-\- SNS notifications
-
-\- GeoJSON artifact
-
-\- Flattened JSON artifact
-
-
-
-\## Future Improvements
-
-
-
-\- Add dataset version control
-
-\- Add automated benchmark scripts
-
-\- Add CI validation for core Python modules
-
-\- Add experiment tracking through MLflow or a similar tool
-
-\- Add deterministic test fixtures
-
+Future improvements include dataset version control, automated benchmark scripts, CI validation for core Python modules, experiment tracking, and deterministic test fixtures.
