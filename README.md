@@ -2,7 +2,59 @@
 
 **WildSight EdgeCloud** is a cloud-native AI/ML research and engineering project for automated wildlife detection, geospatial intelligence generation, and scalable model inference across AWS services. The system combines **YOLOv8 computer vision**, **Amazon SageMaker inference**, **Amazon S3 data ingestion**, **Amazon DynamoDB metadata storage**, **Amazon EventBridge orchestration**, **Amazon SNS notifications**, and **GeoJSON/BI-ready analytics artifacts** to transform camera-trap imagery into structured location intelligence.
 
-The project is designed as an applied AI systems research pipeline, emphasizing the full lifecycle required to operationalize visual detection models: data ingestion, inference, metadata persistence, event-driven automation, geospatial enrichment, analytics export, and cost-aware infrastructure management.
+The project is designed as an applied AI systems research pipeline, emphasizing the full lifecycle required to operationalize visual detection models: data ingestion, inference, metadata persistence, event-driven automation, geospatial enrichment, analytics export, containerized execution, orchestration readiness, and cost-aware infrastructure management.
+
+---
+
+## Architecture Overview
+
+```mermaid
+flowchart LR
+    A[Camera Trap Dataset] --> B[Upload Simulation]
+    B --> C[Amazon S3]
+    C --> D[Amazon EventBridge]
+    D --> E[Amazon SageMaker YOLOv8 Endpoint]
+    E --> F[Amazon DynamoDB]
+    F --> G[GeoJSON Generation]
+    F --> H[Flattened Analytics Export]
+    G --> I[Map Visualization]
+    H --> J[BI Dashboard]
+    D --> K[Amazon SNS Notifications]
+```
+
+---
+
+## Repository Structure
+
+```text
+.
+├── benchmarks/              # Inference profiling and benchmarking utilities
+├── docs/                    # Research, architecture, observability, and reproducibility docs
+├── experiments/             # Experiment tracking artifacts
+├── k8s/                     # Kubernetes deployment manifests
+├── lambdas/                 # Event-driven AWS Lambda workflows
+├── Model/                   # YOLOv8 model artifacts and inference logic
+├── src/                     # S3 ingestion and streaming utilities
+├── stage2_yolov8/           # SageMaker deployment workflows
+├── utils/                   # Dataset download and provisioning helpers
+├── .github/workflows/       # CI validation workflows
+├── Dockerfile               # Containerized execution configuration
+└── README.md
+```
+
+---
+
+## Documentation Index
+
+| Document | Purpose |
+|---|---|
+| [Architecture](docs/architecture.md) | System architecture and AWS workflow |
+| [Research Report](docs/research_report.md) | Research framing and methodology |
+| [Benchmarking](docs/benchmarking.md) | Benchmarking and profiling strategy |
+| [Model Card](docs/model_card.md) | YOLOv8 model documentation |
+| [Data Card](docs/data_card.md) | Dataset structure and limitations |
+| [Observability](docs/observability.md) | Monitoring and failure-mode strategy |
+| [Reproducibility](docs/reproducibility.md) | Reproducibility and experiment tracking |
 
 ---
 
@@ -39,7 +91,9 @@ This repository contributes a reference architecture for cloud-native wildlife d
 - Automated notification workflow through Amazon SNS
 - Flattened JSON generation for BI workflows
 - GeoJSON generation for map-based visualization
-- Operational framing around scalability, reproducibility, cost control, and deployment readiness
+- Docker-based containerization for reproducible runtime environments
+- Kubernetes manifests for orchestration-ready deployment patterns
+- Operational framing around scalability, reproducibility, cost control, security, and deployment readiness
 
 ---
 
@@ -86,6 +140,60 @@ WildSight EdgeCloud demonstrates a full AI/ML workflow:
 
 ---
 
+## Containerization and Orchestration
+
+WildSight EdgeCloud includes containerization and orchestration-oriented deployment assets to support reproducible execution and scalable infrastructure workflows.
+
+### Docker Support
+
+The repository includes a Dockerfile for containerized execution of the inference and ingestion workflow. Containerization enables:
+
+- Reproducible runtime environments
+- Dependency isolation
+- Portable deployment workflows
+- Simplified cloud-native execution patterns
+- More consistent execution across local, cloud, and CI environments
+
+### Kubernetes Support
+
+The repository includes Kubernetes deployment manifests for orchestration-oriented deployment patterns. These manifests demonstrate how inference services can be prepared for scalable workload management and container orchestration environments.
+
+Potential orchestration use cases include:
+
+- Distributed inference workloads
+- Batch image processing
+- Horizontal scaling experiments
+- Cloud-native deployment validation
+- Infrastructure portability across managed Kubernetes environments
+
+---
+
+## Preliminary Benchmark Results
+
+The repository includes benchmarking utilities under `benchmarks/` and an experiment tracking template under `experiments/`. The table below is prepared for measured results after pipeline execution.
+
+| Experiment | Images | Avg Latency | P95 Latency | Throughput | Notes |
+|---|---:|---:|---:|---:|---|
+| Baseline YOLOv8 Endpoint | TBD | TBD | TBD | TBD | SageMaker endpoint benchmark |
+| Local Inference Baseline | TBD | TBD | TBD | TBD | Local model execution benchmark |
+| Batch Ingestion Workflow | TBD | TBD | TBD | TBD | End-to-end ingestion and export benchmark |
+
+---
+
+## Sample Outputs
+
+Visual output artifacts can be added under `docs/assets/` as the pipeline is executed and evaluated.
+
+Planned artifacts include:
+
+- `docs/assets/sample_geojson_map.png`
+- `docs/assets/sample_dashboard.png`
+- `docs/assets/sample_prediction_output.png`
+
+These outputs are intended to document geospatial visualization, BI-ready analytics, and representative model prediction records.
+
+---
+
 ## Technology Stack
 
 | Area | Tools and Services |
@@ -98,6 +206,9 @@ WildSight EdgeCloud demonstrates a full AI/ML workflow:
 | Metadata Store | Amazon DynamoDB |
 | Event Orchestration | Amazon EventBridge |
 | Notification System | Amazon SNS |
+| Containerization | Docker |
+| Orchestration | Kubernetes manifests |
+| CI/CD | GitHub Actions |
 | Geospatial Output | GeoJSON |
 | Analytics Output | Flattened JSON for BI workflows |
 | Dataset Access | Kaggle API |
@@ -184,7 +295,7 @@ The same design pattern can be adapted for disaster response, infrastructure ins
 
 ## Security and Credential Handling
 
-Do not commit cloud credentials, Kaggle tokens, or environment-specific secrets to this repository. Authentication files should remain local and should be excluded through `.gitignore`.
+Do not commit cloud credentials, Kaggle tokens, or environment-specific secrets to this repository. Authentication files should remain local and should be excluded through `.gitignore` and `.dockerignore`.
 
 For production use, prefer IAM roles, scoped permissions, temporary credentials, AWS Secrets Manager, or environment-based credential injection instead of long-lived local credential files.
 
