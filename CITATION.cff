@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "WildSight EdgeCloud: Mission-Scale Wildlife Detection and Geospatial Intelligence Pipeline"
+message: "If you use this repository, please cite it using the metadata below."
+type: software
+authors:
+  - family-names: "Rehman"
+    given-names: "Ateeq Ur"
+repository-code: "https://github.com/ateeqrrehman/wildsight-edgecloud-geospatial-ai"
+abstract: "A cloud-native AI/ML research pipeline for wildlife detection, YOLOv8 inference, AWS-based event orchestration, metadata storage, and geospatial analytics."
+keywords:
+  - computer vision
+  - YOLOv8
+  - AWS
+  - SageMaker
+  - geospatial AI
+  - wildlife detection
+  - MLOps
+license: MIT

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wildsight-edgecloud
+  labels:
+    app: wildsight-edgecloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wildsight-edgecloud
+  template:
+    metadata:
+      labels:
+        app: wildsight-edgecloud
+    spec:
+      containers:
+        - name: wildsight-edgecloud
+          image: wildsight-edgecloud:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080

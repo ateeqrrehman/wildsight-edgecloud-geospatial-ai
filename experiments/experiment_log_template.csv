@@ -1,0 +1,2 @@
+experiment_id,date,dataset_subset,image_count,batch_size,image_resolution,endpoint_name,avg_latency_ms,p50_latency_ms,p95_latency_ms,p99_latency_ms,throughput_img_sec,map,precision,recall,notes
+EXP-001,,,,,,,,,,,,,,,
