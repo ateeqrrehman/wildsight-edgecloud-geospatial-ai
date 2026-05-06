@@ -1,6 +1,6 @@
 # WildSight EdgeCloud: Mission-Scale Wildlife Detection and Geospatial Intelligence Pipeline
 
-**WildSight EdgeCloud** is a cloud-native AI/ML research and engineering project for automated wildlife detection, geospatial intelligence generation, and scalable model inference across AWS services. The system combines **YOLOv8 computer vision**, **Amazon SageMaker inference**, **Amazon S3 data ingestion**, **Amazon DynamoDB metadata storage**, **Amazon EventBridge orchestration**, **Amazon SNS notifications**, and **GeoJSON/BI-ready analytics artifacts** to transform camera-trap imagery into structured location intelligence.
+**WildSight EdgeCloud** is a cloud-native AI/ML research and engineering project for automated wildlife detection, geospatial intelligence generation, and scalable model inference across AWS services. The system combines **YOLOv8 computer vision**, **Amazon SageMaker inference**, **Amazon S3 data ingestion**, **AWS Lambda processing**, **Amazon DynamoDB metadata storage**, **Amazon EventBridge orchestration**, **Amazon SNS notifications**, **Amazon Location Services compatible geospatial visualization**, and **GeoJSON/BI-ready analytics artifacts** to transform camera-trap imagery into structured location intelligence.
 
 The project is designed as an applied AI systems research pipeline, emphasizing the full lifecycle required to operationalize visual detection models: data ingestion, inference, metadata persistence, event-driven automation, geospatial enrichment, analytics export, containerized execution, orchestration readiness, and cost-aware infrastructure management.
 
@@ -13,14 +13,45 @@ flowchart LR
     A[Camera Trap Dataset] --> B[Upload Simulation]
     B --> C[Amazon S3]
     C --> D[Amazon EventBridge]
-    D --> E[Amazon SageMaker YOLOv8 Endpoint]
+    D --> L[AWS Lambda Processing]
+    L --> E[Amazon SageMaker YOLOv8 Endpoint]
     E --> F[Amazon DynamoDB]
     F --> G[GeoJSON Generation]
     F --> H[Flattened Analytics Export]
-    G --> I[Map Visualization]
+    G --> I[Amazon Location Services / Web Map]
     H --> J[BI Dashboard]
-    D --> K[Amazon SNS Notifications]
+    L --> K[Amazon SNS Notifications]
 ```
+
+---
+
+## AWS Services Used
+
+| AWS Service | Role in the System |
+|---|---|
+| Amazon S3 | Stores camera-trap images, upload artifacts, and ingestion-stage objects |
+| Amazon SageMaker | Hosts the YOLOv8 inference endpoint used for wildlife detection |
+| Amazon DynamoDB | Stores image metadata, prediction records, and inference outputs |
+| Amazon EventBridge | Coordinates event-driven workflow triggers for ingestion, logging, notification, and artifact generation |
+| AWS Lambda | Runs event-driven processing logic for ingestion logging, classification workflow handling, batch notification, and GeoJSON generation |
+| Amazon SNS | Sends notification events for image uploads, classifications, and pipeline updates |
+| Amazon Location Services | Supports map-based visualization and location-aware analysis of wildlife detection outputs through GeoJSON-compatible geospatial artifacts |
+| AWS IAM | Controls scoped permissions across storage, inference, event, notification, and processing services |
+| Amazon CloudWatch | Recommended for logs, endpoint metrics, event monitoring, operational dashboards, and failure investigation |
+
+---
+
+## Geospatial and Location Intelligence Layer
+
+The pipeline generates GeoJSON artifacts from prediction records to support downstream map-based analytics. This layer is designed to integrate with **Amazon Location Services** or compatible web-mapping tools for visualizing wildlife detections across geographic coordinates.
+
+Amazon Location Services can support:
+
+- Map rendering for wildlife detection points
+- Location-aware visualization of species activity
+- Geospatial filtering and regional analysis
+- Operational map-based decision support
+- Integration of prediction outputs with broader location intelligence workflows
 
 ---
 
@@ -86,9 +117,10 @@ This repository contributes a reference architecture for cloud-native wildlife d
 
 - End-to-end image ingestion and inference workflow for camera-trap data
 - YOLOv8-based object detection pipeline deployed through Amazon SageMaker
-- Event-driven processing through Amazon EventBridge rules
+- Event-driven processing through Amazon EventBridge and AWS Lambda
 - Prediction and metadata persistence using Amazon DynamoDB
 - Automated notification workflow through Amazon SNS
+- Amazon Location Services compatible geospatial visualization layer
 - Flattened JSON generation for BI workflows
 - GeoJSON generation for map-based visualization
 - Docker-based containerization for reproducible runtime environments
@@ -107,20 +139,20 @@ The pipeline follows a cloud-native, event-driven architecture:
 2. **Object Storage**  
    Images and associated metadata are uploaded to Amazon S3, representing a camera-trap ingestion source.
 
-3. **Model Inference**  
+3. **Event Orchestration and Processing**  
+   Amazon EventBridge routes events to AWS Lambda functions that support ingestion logging, notification handling, classification workflow execution, and geospatial artifact generation.
+
+4. **Model Inference**  
    A YOLOv8 model is served through an Amazon SageMaker endpoint for wildlife detection.
 
-4. **Metadata and Prediction Storage**  
+5. **Metadata and Prediction Storage**  
    Image metadata and model prediction outputs are stored in Amazon DynamoDB.
-
-5. **Event-Driven Processing**  
-   Amazon EventBridge rules coordinate logging, notification, and geospatial artifact generation.
 
 6. **Notification Layer**  
    Amazon SNS supports email-based notification of image events and classification outputs.
 
 7. **Geospatial Analytics Layer**  
-   Prediction records are transformed into flattened JSON and GeoJSON outputs for BI dashboards and web-map visualization.
+   Prediction records are transformed into flattened JSON and GeoJSON outputs for BI dashboards, Amazon Location Services compatible workflows, and web-map visualization.
 
 ---
 
@@ -132,7 +164,7 @@ WildSight EdgeCloud demonstrates a full AI/ML workflow:
 - Data staging and camera-trap upload simulation
 - Cloud object storage using Amazon S3
 - YOLOv8 inference through Amazon SageMaker
-- Event-driven processing with Amazon EventBridge
+- Event-driven processing with Amazon EventBridge and AWS Lambda
 - Prediction persistence in Amazon DynamoDB
 - Notification delivery through Amazon SNS
 - Export of analytics-ready artifacts for geospatial visualization
@@ -146,7 +178,9 @@ WildSight EdgeCloud includes containerization and orchestration-oriented deploym
 
 ### Docker Support
 
-The repository includes a Dockerfile for containerized execution of the inference and ingestion workflow. Containerization enables:
+The repository includes a Dockerfile for containerized execution of the inference and ingestion workflow. Docker is used as a deployment-readiness component to package the Python runtime, project dependencies, and pipeline entry point into a reproducible execution environment.
+
+Containerization enables:
 
 - Reproducible runtime environments
 - Dependency isolation
@@ -156,7 +190,9 @@ The repository includes a Dockerfile for containerized execution of the inferenc
 
 ### Kubernetes Support
 
-The repository includes Kubernetes deployment manifests for orchestration-oriented deployment patterns. These manifests demonstrate how inference services can be prepared for scalable workload management and container orchestration environments.
+The repository includes Kubernetes deployment manifests under `k8s/`. These manifests provide an orchestration-ready foundation for future containerized batch inference, local reproducibility testing, and cloud-native deployment experiments.
+
+The current workflow is primarily AWS-managed through SageMaker, S3, EventBridge, Lambda, DynamoDB, and SNS. The Dockerfile and Kubernetes manifests are included to show how the project can evolve toward containerized inference services, scalable workload orchestration, and portable infrastructure patterns.
 
 Potential orchestration use cases include:
 
@@ -192,6 +228,33 @@ Recommended measured outputs include:
 
 ---
 
+## Schema and Testing Roadmap
+
+The current repository includes CI-based Python compilation checks through GitHub Actions. The next testing layer should introduce schema validation and unit tests for data contracts used across the pipeline.
+
+Planned testing additions include:
+
+```text
+tests/
+├── test_config_loading.py
+├── test_geojson_schema.py
+└── test_prediction_record_schema.py
+
+schemas/
+├── prediction_record.schema.json
+└── geojson_feature.schema.json
+```
+
+These additions will support:
+
+- Prediction record validation before DynamoDB persistence
+- GeoJSON schema validation before map or BI consumption
+- Configuration loading checks for deployment reproducibility
+- Regression testing for artifact generation logic
+- Stronger CI validation beyond Python syntax compilation
+
+---
+
 ## Sample Outputs
 
 Visual output artifacts can be added under `docs/assets/` as the pipeline is executed and evaluated.
@@ -215,9 +278,13 @@ These outputs are intended to document geospatial visualization, BI-ready analyt
 | Cloud Platform | AWS |
 | Model Serving | Amazon SageMaker |
 | Object Storage | Amazon S3 |
+| Serverless Processing | AWS Lambda |
 | Metadata Store | Amazon DynamoDB |
 | Event Orchestration | Amazon EventBridge |
 | Notification System | Amazon SNS |
+| Location Intelligence | Amazon Location Services compatible GeoJSON workflow |
+| Monitoring | Amazon CloudWatch recommended |
+| Access Control | AWS IAM recommended |
 | Containerization | Docker |
 | Orchestration | Kubernetes manifests |
 | CI/CD | GitHub Actions |
@@ -258,14 +325,14 @@ Inference outputs and image metadata are written to DynamoDB, enabling structure
 
 ### 5. Event-Driven Automation
 
-EventBridge rules coordinate pipeline behavior, including ingestion logging, batch notification, and GeoJSON artifact creation.
+EventBridge and AWS Lambda coordinate pipeline behavior, including ingestion logging, batch notification, and GeoJSON artifact creation.
 
 ### 6. Geospatial Output Generation
 
 Prediction records are converted into:
 
 - `wildlife_predictions_FLATTENED.json` for BI workflows
-- `wildlife_predictions.geojson` for web-map visualization
+- `wildlife_predictions.geojson` for Amazon Location Services compatible map visualization and web-map workflows
 
 ---
 
@@ -315,7 +382,7 @@ For production use, prefer IAM roles, scoped permissions, temporary credentials,
 
 ## Configuration
 
-Update `config.yaml` with the AWS user context, region, and notification email. Before running the pipeline, confirm that AWS resources are configured correctly, including S3 buckets, DynamoDB tables, EventBridge rules, SNS subscription settings, and SageMaker endpoint configuration.
+Update `config.yaml` with the AWS user context, region, and notification email. Before running the pipeline, confirm that AWS resources are configured correctly, including S3 buckets, DynamoDB tables, EventBridge rules, Lambda functions, SNS subscription settings, SageMaker endpoint configuration, and geospatial visualization outputs.
 
 ---
 
@@ -348,8 +415,10 @@ Before execution, verify:
 - The S3 ingestion bucket is available and old test images are removed if needed
 - The DynamoDB table exists and old test records are cleared if needed
 - EventBridge rules are enabled
+- Lambda functions are deployed or available where applicable
 - SNS subscription email is configured and confirmed
 - SageMaker endpoint configuration is available
+- GeoJSON output paths are available for location intelligence workflows
 
 ### 5. Create SageMaker Endpoint
 
@@ -381,7 +450,7 @@ After a successful run, the system produces:
 - Metadata and prediction records in DynamoDB
 - Email notifications through Amazon SNS
 - `wildlife_predictions_FLATTENED.json` for BI ingestion
-- `wildlife_predictions.geojson` for map visualization
+- `wildlife_predictions.geojson` for Amazon Location Services compatible map visualization and web-map workflows
 
 ---
 
@@ -389,7 +458,7 @@ After a successful run, the system produces:
 
 The SageMaker endpoint is provisioned infrastructure and may continue to incur cost while active. After testing or demonstration, delete the endpoint from Amazon SageMaker.
 
-Do not delete reusable endpoint configurations, deployable models, DynamoDB tables, or other shared infrastructure unless intentionally removing the full environment.
+Do not delete reusable endpoint configurations, deployable models, DynamoDB tables, Lambda functions, EventBridge rules, or other shared infrastructure unless intentionally removing the full environment.
 
 ---
 
@@ -402,6 +471,7 @@ Current limitations include:
 - The current workflow is designed for simulation-style image ingestion rather than live camera hardware integration
 - Evaluation depends on available labeled ground truth for species-level performance metrics
 - Edge deployment and disconnected environment support are not yet fully implemented
+- Docker and Kubernetes assets are deployment-readiness components and are not a replacement for the current AWS-managed SageMaker inference path
 
 ---
 
@@ -412,12 +482,14 @@ Planned research and engineering extensions include:
 - Containerized inference service using Docker
 - Kubernetes deployment manifests for scalable inference workloads
 - CI/CD workflow for automated testing and deployment validation
+- Unit tests for configuration, prediction schemas, and GeoJSON artifacts
+- JSON schema validation for DynamoDB prediction records and geospatial outputs
 - Batch inference support for large camera-trap archives
 - Edge deployment for disconnected or low-bandwidth environments
 - Model monitoring and inference drift detection
 - Latency and throughput benchmarking under different image-volume workloads
 - Precision, recall, and mAP evaluation against labeled validation sets
-- Integration with Amazon QuickSight for fully cloud-native BI visualization
+- Integration with Amazon QuickSight and Amazon Location Services for fully cloud-native analytics and geospatial visualization
 - Secure deployment patterns using IAM roles and least-privilege access control
 
 ---
