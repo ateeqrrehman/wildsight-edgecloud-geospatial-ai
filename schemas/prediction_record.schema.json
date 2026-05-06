@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WildSight Prediction Record",
+  "type": "object",
+  "required": ["image_id", "source", "predictions"],
+  "properties": {
+    "image_id": {"type": "string"},
+    "source": {"type": "string"},
+    "timestamp": {"type": "string"},
+    "latitude": {"type": ["number", "null"]},
+    "longitude": {"type": ["number", "null"]},
+    "predictions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["class_name", "confidence"],
+        "properties": {
+          "class_name": {"type": "string"},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "bbox": {
+            "type": "array",
+            "items": {"type": "number"},
+            "minItems": 4,
+            "maxItems": 4
+          }
+        }
+      }
+    }
+  }
+}
