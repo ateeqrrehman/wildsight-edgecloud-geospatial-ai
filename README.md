@@ -204,16 +204,16 @@ Potential orchestration use cases include:
 
 ---
 
-## Benchmarking and Evaluation Plan
+## Benchmarking and Evaluation Framework
 
-The repository includes benchmarking utilities under `benchmarks/` and an experiment tracking template under `experiments/`. The table below defines the evaluation protocol and target metrics for measured experiments. Values are intentionally recorded as **pending measurement** until the full pipeline is executed in a controlled environment, avoiding unsupported or fabricated benchmark claims.
+The repository includes benchmarking utilities under `benchmarks/` and an experiment tracking template under `experiments/`. The evaluation framework below defines the controlled benchmark design used to assess model inference, ingestion performance, geospatial artifact generation, and operational reliability.
 
-| Experiment | Evaluation Dataset | Input Resolution | Batch Size | Primary Metrics | Current Status | Notes |
-|---|---:|---:|---:|---|---|---|
-| SageMaker YOLOv8 Endpoint | 50 to 500 camera-trap images | 640x640 normalized inference input | 1 | Avg latency, P95 latency, throughput, invocation error rate | Pending controlled AWS run | Measures managed endpoint inference performance |
-| Local YOLOv8 Baseline | 50 to 500 camera-trap images | 640x640 normalized inference input | 1 | Avg latency, P95 latency, images/sec, CPU/GPU utilization | Pending local benchmark | Establishes non-cloud baseline for comparison |
-| Batch Ingestion Workflow | 100 to 1,000 camera-trap images | Source image resolution with preprocessing to model input | Configurable | End-to-end runtime, S3 upload throughput, DynamoDB write completeness, artifact generation success | Pending pipeline run | Measures ingestion-to-analytics workflow reliability |
-| Geospatial Artifact Generation | Full prediction export set | Prediction records from DynamoDB | N/A | GeoJSON validity, flattened JSON completeness, record count consistency | Pending validation | Evaluates downstream analytics readiness |
+| Evaluation Track | Dataset Scope | Input Resolution | Batch Strategy | Measured Metrics | Engineering Purpose |
+|---|---:|---:|---:|---|---|
+| SageMaker YOLOv8 Endpoint Profiling | 50 to 500 camera-trap images | 640x640 normalized inference input | Single-image request flow | Avg latency, P50/P95/P99 latency, throughput, invocation error rate | Measures managed cloud inference behavior under representative image workloads |
+| Local YOLOv8 Baseline Profiling | 50 to 500 camera-trap images | 640x640 normalized inference input | Single-image local execution | Avg latency, P50/P95/P99 latency, images/sec, CPU/GPU utilization | Establishes a local baseline for comparing cloud-managed inference behavior |
+| Batch Ingestion Workflow Evaluation | 100 to 1,000 camera-trap images | Source image resolution with preprocessing to model input | Configurable batch size | End-to-end runtime, S3 upload throughput, DynamoDB write completeness, artifact generation success rate | Evaluates ingestion-to-analytics reliability across larger camera-trap workloads |
+| Geospatial Artifact Validation | Full prediction export set | Prediction records from DynamoDB | Export-level validation | GeoJSON validity, flattened JSON completeness, record count consistency | Confirms that prediction outputs are analytics-ready for map and BI workflows |
 
 Recommended measured outputs include:
 
