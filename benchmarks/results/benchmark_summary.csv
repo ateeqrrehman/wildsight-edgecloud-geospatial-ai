@@ -1,1 +1,5 @@
-experiment,input_resolution,batch_size,avg_latency_ms,p95_latency_ms,throughput_images_per_sec,error_rate
+experiment,input_resolution,batch_size,avg_latency_ms,p95_latency_ms,throughput_images_per_sec,error_rate,measurement_context
+sagemaker_yolov8_endpoint,640x640,1,,,,,controlled_aws_endpoint_profile
+local_yolov8_baseline,640x640,1,,,,,local_runtime_baseline
+batch_ingestion_workflow,source_to_640x640,configurable,,,,,end_to_end_pipeline_evaluation
+geospatial_artifact_validation,prediction_export_set,N/A,,,,,analytics_output_validation
